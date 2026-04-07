@@ -78,7 +78,8 @@
     .markets-grid { grid-template-columns: 1fr; }
     .summary-grid { grid-template-columns: 1fr 1fr; }
     table { font-size: 12px; }
-    th, td { padding: 8px 10px; }
+    th, td { padding: 6px 8px; }
+    .col-hide-mobile { display: none; }
     .log-box { height: 200px; font-size: 11px; }
     .tab-btn { padding: 10px 12px; font-size: 12px; }
     .section-title { font-size: 11px; margin-top: 20px; }
@@ -381,12 +382,12 @@
           <th>Direction</th>
           <th>Entry</th>
           <th>Current</th>
-          <th>Stop</th>
-          <th>Target</th>
-          <th>Size</th>
+          <th class="col-hide-mobile">Stop</th>
+          <th class="col-hide-mobile">Target</th>
+          <th class="col-hide-mobile">Size</th>
           <th id="sort-pnlpct" style="cursor:pointer;user-select:none" onclick="sortPositions('pnlpct')">P&amp;L % <span id="sort-arrow-pnlpct"></span></th>
           <th id="sort-pnlgbp" style="cursor:pointer;user-select:none" onclick="sortPositions('pnlgbp')">P&amp;L £ <span id="sort-arrow-pnlgbp">▼</span></th>
-          <th id="sort-opened" style="cursor:pointer;user-select:none" onclick="sortPositions('opened')">Opened <span id="sort-arrow-opened"></span></th>
+          <th class="col-hide-mobile" id="sort-opened" style="cursor:pointer;user-select:none" onclick="sortPositions('opened')">Opened <span id="sort-arrow-opened"></span></th>
         </tr>
       </thead>
       <tbody id="positions-body">
@@ -694,12 +695,12 @@ function renderPositionsTable() {
       <td class="${dirClass}">${dirLabel}</td>
       <td>${fmt(p.level)}</td>
       <td>${livePrice != null ? fmt(livePrice) : "—"}</td>
-      <td>${fmt(p.stop)}</td>
-      <td>${fmt(p.limit)}</td>
-      <td>${p.size ?? "—"}</td>
+      <td class="col-hide-mobile">${fmt(p.stop)}</td>
+      <td class="col-hide-mobile">${fmt(p.limit)}</td>
+      <td class="col-hide-mobile">${p.size ?? "—"}</td>
       <td>${pnlPctHtml}</td>
       <td>${pnlGbpHtml}</td>
-      <td>${created}</td>
+      <td class="col-hide-mobile">${created}</td>
     </tr>`;
   });
 
@@ -707,9 +708,13 @@ function renderPositionsTable() {
     ? `<span class="${totalPnlGbp >= 0 ? "pnl-positive" : "pnl-negative"}">${totalPnlGbp >= 0 ? "+" : ""}£${fmt(Math.abs(totalPnlGbp))}</span>`
     : "—";
   const totalRow = `<tr style="border-top:2px solid #30363d;background:#1c2128">
-    <td colspan="8" style="font-weight:700;color:#f0f6fc">Total</td>
-    <td>${totalCol}</td>
+    <td colspan="4" style="font-weight:700;color:#f0f6fc">Total</td>
+    <td class="col-hide-mobile"></td>
+    <td class="col-hide-mobile"></td>
+    <td class="col-hide-mobile"></td>
     <td></td>
+    <td>${totalCol}</td>
+    <td class="col-hide-mobile"></td>
   </tr>`;
 
   tbody.innerHTML = rows.join("") + totalRow;
