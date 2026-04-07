@@ -1,0 +1,112 @@
+{
+  "PALLADIUM": {
+    "deal_id": "00018404-0055-311e-0000-000081030445",
+    "market_name": "Palladium",
+    "direction": "BUY",
+    "fill_price": 1432.8,
+    "stop_level": 1399.98,
+    "limit_level": 1485.69,
+    "size": 7.7,
+    "opened_at": "2026-03-25 18:00:24"
+  },
+  "WHEAT": {
+    "deal_id": "00193697-0055-311e-0000-000080ba0328",
+    "market_name": "Wheat",
+    "direction": "SELL",
+    "fill_price": 602.6,
+    "stop_level": 618.07,
+    "limit_level": 578.88,
+    "size": 14.6,
+    "opened_at": "2026-03-25 18:00:28"
+  },
+  "US30": {
+    "deal_id": "174f8d67-0055-311e-0000-00008185a510",
+    "market_name": "Dow Jones",
+    "direction": "BUY",
+    "fill_price": 46353.6,
+    "stop_level": 45425.55,
+    "limit_level": 48670.23,
+    "size": 0.2,
+    "opened_at": "2026-03-25 22:31:30"
+  },
+  "COPPER": {
+    "deal_id": "00193207-0055-311e-0000-000081071ca7",
+    "market_name": "Copper",
+    "direction": "BUY",
+    "fill_price": 5.51256,
+    "stop_level": 5.37,
+    "limit_level": 5.84,
+    "size": 1586.4,
+    "opened_at": "2026-03-26 04:24:48"
+  },
+  "SILVER": {
+    "deal_id": "006011e7-0055-311e-0000-000081403dc8",
+    "market_name": "Silver",
+    "direction": "BUY",
+    "fill_price": 70.014,
+    "stop_level": 67.88,
+    "limit_level": 74.17,
+    "size": 102.3,
+    "opened_at": "2026-03-26 06:55:53"
+  },
+  "DE40": {
+    "deal_id": "07101627-0015-549e-0000-000080fe9496",
+    "market_name": "DAX",
+    "direction": "BUY",
+    "fill_price": 22664.8,
+    "stop_level": 22210.87,
+    "limit_level": 23570.72,
+    "size": 0.5,
+    "opened_at": "2026-03-26 08:31:00"
+  },
+  "US500": {
+    "deal_id": "004d0627-0055-311e-0000-000081601614",
+    "market_name": "S&P 500",
+    "direction": "BUY",
+    "fill_price": 6554.5,
+    "stop_level": 6423.21,
+    "limit_level": 6882.02,
+    "size": 1.6,
+    "opened_at": "2026-03-26 08:31:04"
+  },
+  "PLATINUM": {
+    "deal_id": "00018414-0055-311e-0000-000081031348",
+    "market_name": "Platinum",
+    "direction": "BUY",
+    "fill_price": 1885.2,
+    "stop_level": 1822.0,
+    "limit_level": 1972.27,
+    "size": 3.8,
+    "opened_at": "2026-03-26 08:31:08"
+  },
+  "OIL_BRENT": {
+    "deal_id": "00018092-0055-311e-0000-00008133a9e4",
+    "market_name": "Brent Crude Oil",
+    "direction": "SELL",
+    "fill_price": 101.128,
+    "stop_level": 103.66,
+    "limit_level": 96.07,
+    "size": 83.9,
+    "opened_at": "2026-03-26 08:35:30"
+  },
+  "US100": {
+    "deal_id": "00384627-0055-311e-0000-0000831dce67",
+    "market_name": "Nasdaq 100",
+    "direction": "BUY",
+    "fill_price": 23960.0,
+    "stop_level": 23240.13,
+    "limit_level": 25156.85,
+    "size": 0.3,
+    "opened_at": "2026-03-26 09:01:30"
+  },
+  "RTY": {
+    "deal_id": "00012519-0055-311e-0000-000081031fa2",
+    "market_name": "Russell 2000",
+    "direction": "BUY",
+    "fill_price": 2507.4,
+    "stop_level": 2444.47,
+    "limit_level": 2632.51,
+    "size": 3.4,
+    "opened_at": "2026-03-26 10:01:10"
+  }
+}
