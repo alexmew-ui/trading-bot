@@ -11,7 +11,7 @@ import time
 import threading
 import secrets
 from datetime import datetime, timedelta
-from flask import Flask, jsonify, send_from_directory, request, session, redirect, url_for
+from flask import Flask, jsonify, send_from_directory, request
 from flask_cors import CORS
 
 import sys
@@ -23,21 +23,7 @@ from bot_capital import (
 )
 
 app = Flask(__name__, static_folder=".")
-app.secret_key = os.getenv("FLASK_SECRET_KEY", secrets.token_hex(32))
 CORS(app)
-
-# Dashboard login credentials — set these as environment variables on Railway
-DASHBOARD_USERNAME = os.getenv("DASHBOARD_USERNAME", "admin")
-DASHBOARD_PASSWORD = os.getenv("DASHBOARD_PASSWORD", "changeme")
-
-def login_required(f):
-    from functools import wraps
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        if not session.get("logged_in"):
-            return redirect("/login")
-        return f(*args, **kwargs)
-    return decorated
 
 LOG_FILE = os.path.join(os.path.dirname(__file__), "trading_log_capital.txt")
 
@@ -74,69 +60,9 @@ def last_log_line(keyword):
     return result
 
 
-# ── Login Routes ────────────────────────────────────────────────
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    error = None
-    if request.method == "POST":
-        if (request.form.get("username") == DASHBOARD_USERNAME and
-                request.form.get("password") == DASHBOARD_PASSWORD):
-            session["logged_in"] = True
-            return redirect("/")
-        error = "Incorrect username or password."
-    return f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trading Bot — Login</title>
-<style>
-  * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-  body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-         background: #0d1117; color: #e6edf3; min-height: 100vh;
-         display: flex; align-items: center; justify-content: center; padding: 20px; }}
-  .card {{ background: #161b22; border: 1px solid #30363d; border-radius: 12px;
-           padding: 32px 28px; width: 100%; max-width: 360px; }}
-  h1 {{ font-size: 20px; font-weight: 700; color: #f0f6fc; margin-bottom: 6px; }}
-  p {{ font-size: 13px; color: #8b949e; margin-bottom: 28px; }}
-  label {{ display: block; font-size: 13px; color: #c9d1d9; margin-bottom: 6px; }}
-  input {{ width: 100%; padding: 10px 14px; background: #0d1117; border: 1px solid #30363d;
-           border-radius: 6px; color: #f0f6fc; font-size: 15px; margin-bottom: 16px; }}
-  input:focus {{ outline: none; border-color: #58a6ff; }}
-  button {{ width: 100%; padding: 12px; background: #238636; color: #fff; border: none;
-            border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 4px; }}
-  button:hover {{ background: #2ea043; }}
-  .error {{ background: #3a1a1a; border: 1px solid #f87171; color: #f87171;
-            padding: 10px 14px; border-radius: 6px; font-size: 13px; margin-bottom: 16px; }}
-</style>
-</head>
-<body>
-<div class="card">
-  <h1>Trading Bot</h1>
-  <p>Sign in to access your dashboard</p>
-  {'<div class="error">' + error + '</div>' if error else ''}
-  <form method="POST">
-    <label>Username</label>
-    <input type="text" name="username" autocomplete="username" autocapitalize="none" required>
-    <label>Password</label>
-    <input type="password" name="password" autocomplete="current-password" required>
-    <button type="submit">Sign in</button>
-  </form>
-</div>
-</body>
-</html>"""
-
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect("/login")
-
-
 # ── API Routes ──────────────────────────────────────────────────
 
 @app.route("/")
-@login_required
 def index():
     from flask import send_from_directory, Response
     resp = send_from_directory(os.path.dirname(__file__), "dashboard_capital.html")
@@ -145,7 +71,6 @@ def index():
 
 
 @app.route("/api/status")
-@login_required
 def api_status():
     cached = get_cached("status")
     if cached:
@@ -170,7 +95,6 @@ def api_status():
 
 
 @app.route("/api/markets")
-@login_required
 def api_markets():
     cached = get_cached("markets")
     if cached:
@@ -249,7 +173,6 @@ def api_markets():
 
 
 @app.route("/api/positions")
-@login_required
 def api_positions():
     cached = get_cached("positions")
     if cached:
@@ -265,11 +188,9 @@ def api_positions():
             mkt = p.get("market", {})
             direction  = pos.get("direction")
             size       = pos.get("size")
-            net_change = mkt.get("netChange")      # day's price move in points
-            pct_change = mkt.get("percentageChange")  # day's % move
+            net_change = mkt.get("netChange")
+            pct_change = mkt.get("percentageChange")
 
-            # Daily P&L: how much the position has gained/lost today based on the
-            # market's net change since yesterday's close
             if net_change is not None and size is not None:
                 multiplier = 1 if direction == "BUY" else -1
                 day_pnl_gbp = round(net_change * size * multiplier, 2)
@@ -300,7 +221,6 @@ def api_positions():
 
 
 @app.route("/api/log")
-@login_required
 def api_log():
     try:
         if not os.path.exists(LOG_FILE):
@@ -314,7 +234,6 @@ def api_log():
 
 
 @app.route("/api/history")
-@login_required
 def api_history():
     cached = get_cached("history", ttl=300)
     if cached:
@@ -323,12 +242,10 @@ def api_history():
         _dashboard_client.load_session()
         client = _dashboard_client
 
-        # Fetch all closed transactions
         r = client._get(f"{BASE_URL}/history/transactions",
                         params={"type": "ALL", "pageSize": 500})
         transactions = r.json().get("transactions", []) if r.status_code == 200 else []
 
-        # Parse closed trades (DEAL type only)
         trades = []
         starting_balance = 11000.0
         for t in transactions:
@@ -365,14 +282,12 @@ def api_history():
 
         trades.sort(key=lambda x: x["date"])
 
-        # Build cumulative balance series from trades
         balance = starting_balance
         balance_series = [{"date": "2026-03-25T00:00:00", "balance": starting_balance}]
         for t in trades:
             balance += t["pnl_gbp"]
             balance_series.append({"date": t["date"], "balance": round(balance, 2)})
 
-        # Pull balance snapshots from log for smoother chart
         log_balances = []
         if os.path.exists(LOG_FILE):
             with open(LOG_FILE) as f:
@@ -387,7 +302,6 @@ def api_history():
                             "balance": float(m.group(2).replace(",", "")),
                         })
 
-        # Per-market breakdown
         market_stats = {}
         for t in trades:
             name = t["market"]
@@ -440,7 +354,6 @@ def api_history():
 
 
 @app.route("/api/run", methods=["POST"])
-@login_required
 def api_run():
     if os.path.exists(LOCK_FILE):
         return jsonify({"status": "already_running", "message": "Bot is already running, please wait."})

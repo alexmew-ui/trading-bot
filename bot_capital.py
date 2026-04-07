@@ -19,6 +19,7 @@ import schedule
 import smtplib
 from email.mime.text import MIMEText
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -161,7 +162,7 @@ MARKETS = {
 LOG_FILE = "trading_log_capital.txt"
 
 def log(message):
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    timestamp = datetime.now(ZoneInfo("Europe/London")).strftime("%Y-%m-%d %H:%M:%S")
     line = f"[{timestamp}] {message}"
     print(line)
     with open(LOG_FILE, "a") as f:
